@@ -1,0 +1,34 @@
+[id*='ProductInformation']:has(.bss-lock-element) .quantity-selector {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+[id*='ProductInformation']:has(.bss-lock-element) [id*='BuyButtons-ProductSubmitButton-'] {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+[id*='ProductInformation']:has(.bss-lock-element) .shopify-payment-button {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+.product__info-wrapper:has(.bss-lock-element) .shopify-payment-button {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+.product__info-wrapper:has(.bss-lock-element) [id*='ProductSubmitButton'] {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+#ResultsList .product-grid__item:has(.bss-lock-element) form[id*='BuyButtons-ProductForm-'] {
+  display: none;
+}
+#ResultsList .product-grid__item:has(.bss-lock-element) button.quick-add__button {
+  display: none;
+}
+script#bss-behavior-script {
+  display: none !important;
+}

@@ -1,0 +1,119 @@
+{%- doc -%}
+  Add-to-cart button with fallback "Notify me" form in popup when out of stock.
+{%- enddoc -%}
+
+{% liquid
+  assign default_add_to_cart_text = 'actions.add_to_cart' | t
+  assign product_variant_media = product.selected_or_first_available_variant.featured_media.preview_image | image_url: width: 100
+  if product.selected_or_first_available_variant.featured_media.preview_image == blank
+    assign product_variant_media = product.featured_media.preview_image | image_url: width: 100
+  endif
+-%}
+
+{% comment %}
+  Conditional display:
+  If product is available, show the standard add-to-cart button.
+  If product is out of stock, show the "Notify Me" button.
+{% endcomment %}
+{% if product.available %}
+  <button class='button {{ class }}' name='add' type='submit' id='{{ id }}'>
+    <span class='add-to-cart-text'>
+      <span class='svg-wrapper add-to-cart-icon'>
+        {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+      </span>
+      <span class='add-to-cart-text__content{% if icon_only_on_mobile %} is-visually-hidden-mobile{% endif %}'>
+        {{- add_to_cart_text | default: default_add_to_cart_text -}}
+      </span>
+    </span>
+    <span class='add-to-cart-text--added' aria-hidden='true'>
+      <span class='svg-wrapper add-to-cart-icon--added'>
+        {{- 'icon-checkmark.svg' | inline_asset_content -}}
+      </span>
+      <span class='{% if icon_only_on_mobile %}is-visually-hidden-mobile{% endif %}'>
+        {{- 'actions.added' | t -}}
+      </span>
+    </span>
+  </button>
+
+{% else %}
+  <!-- Out of Stock Button - This button will open the modal -->
+  <button class='button notify-button {{ class }}' type='button'>Notify Me When Available</button>
+{% endif %}
+
+{% comment %}
+  The "Notify Me" modal. This should be rendered outside the add-to-cart-component
+  so its functionality is independent. It's hidden by default via CSS.
+{% endcomment %}
+<div class='notify-modal' id='notifyModal'>
+  <div class='notify-modal-content'>
+    <span class='close'>×</span>
+    <h3>Out of Stock</h3>
+    <p>Enter your email below and we'll let you know when it's back!</p>
+    <form id='notify-form'>
+      <input value='contact' name='form_type' type='hidden'>
+      <input value='back-in-stock' name='contact[tags]' type='hidden'>
+      <input value='Notify me for product: {{ product.title }}' name='contact[body]' type='hidden'>
+      <input
+        style='width:100%; padding: 8px; margin-bottom: 10px;'
+        required=''
+        placeholder='Your email'
+        name='contact[email]'
+        type='email'
+      >
+      <button style='width:100%;' class='button' type='submit'>Send</button>
+    </form>
+  </div>
+</div>
+
+<a
+  data-encoded-tag-name='script'
+  data-encoded-tag-value='JTBBZnVuY3Rpb24lMjBvcGVuTm90aWZ5TW9kYWwoKSUyMCU3QiUwQSUyMCUyMGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdub3RpZnlNb2RhbCcpLnN0eWxlLmRpc3BsYXklMjAlM0QlMjAnYmxvY2snJTNCJTBBJTdEJTBBJTBBZnVuY3Rpb24lMjBjbG9zZU5vdGlmeU1vZGFsKCklMjAlN0IlMEElMjAlMjBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbm90aWZ5TW9kYWwnKS5zdHlsZS5kaXNwbGF5JTIwJTNEJTIwJ25vbmUnJTNCJTBBJTdEJTBBJTBBZnVuY3Rpb24lMjBoYW5kbGVOb3RpZnlTdWJtaXQoZXZlbnQpJTIwJTdCJTBBJTIwJTIwZXZlbnQucHJldmVudERlZmF1bHQoKSUzQiUwQSUyMCUyMGV2ZW50LnN0b3BQcm9wYWdhdGlvbigpJTNCJTBBJTIwJTIwJTBBJTIwJTIwY29uc3QlMjBmb3JtJTIwJTNEJTIwZXZlbnQudGFyZ2V0JTNCJTBBJTIwJTIwY29uc3QlMjBmb3JtRGF0YSUyMCUzRCUyMG5ldyUyMEZvcm1EYXRhKGZvcm0pJTNCJTBBJTIwJTIwJTBBJTIwJTIwJTJGJTJGJTIwU2hvdyUyMGxvYWRpbmclMjBzdGF0ZSUwQSUyMCUyMGNvbnN0JTIwc3VibWl0QnV0dG9uJTIwJTNEJTIwZm9ybS5xdWVyeVNlbGVjdG9yKCdidXR0b24lNUJ0eXBlJTNEJTIyc3VibWl0JTIyJTVEJyklM0IlMEElMjAlMjBjb25zdCUyMG9yaWdpbmFsVGV4dCUyMCUzRCUyMHN1Ym1pdEJ1dHRvbi50ZXh0Q29udGVudCUzQiUwQSUyMCUyMHN1Ym1pdEJ1dHRvbi50ZXh0Q29udGVudCUyMCUzRCUyMCdTZW5kaW5nLi4uJyUzQiUwQSUyMCUyMHN1Ym1pdEJ1dHRvbi5kaXNhYmxlZCUyMCUzRCUyMHRydWUlM0IlMEElMjAlMjAlMEElMjAlMjBmZXRjaCgnJTJGY29udGFjdCclMkMlMjAlN0IlMEElMjAlMjAlMjAlMjBtZXRob2QlM0ElMjAnUE9TVCclMkMlMEElMjAlMjAlMjAlMjBib2R5JTNBJTIwZm9ybURhdGElMkMlMEElMjAlMjAlMjAlMjBoZWFkZXJzJTNBJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJ0FjY2VwdCclM0ElMjAnYXBwbGljYXRpb24lMkZqc29uJyUwQSUyMCUyMCUyMCUyMCU3RCUwQSUyMCUyMCU3RCkudGhlbihyZXNwb25zZSUyMCUzRCUzRSUyMCU3QiUwQSUyMCUyMCUyMCUyMGlmJTIwKHJlc3BvbnNlLm9rKSUyMCU3QiUwQSUyMCUyMCUyMCUyMCUyMCUyMGFsZXJ0KCdUaGFuayUyMHlvdSElMjBXZSU1QydsbCUyMG5vdGlmeSUyMHlvdSUyMHdoZW4lMjB0aGlzJTIwaXRlbSUyMGlzJTIwYmFjayUyMGluJTIwc3RvY2suJyklM0IlMEElMjAlMjAlMjAlMjAlMjAlMjBjbG9zZU5vdGlmeU1vZGFsKCklM0IlMEElMjAlMjAlMjAlMjAlMjAlMjBmb3JtLnJlc2V0KCklM0IlMEElMjAlMjAlMjAlMjAlN0QlMjBlbHNlJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwdGhyb3clMjBuZXclMjBFcnJvcignTmV0d29yayUyMHJlc3BvbnNlJTIwd2FzJTIwbm90JTIwb2snKSUzQiUwQSUyMCUyMCUyMCUyMCU3RCUwQSUyMCUyMCU3RCkuY2F0Y2goZXJyb3IlMjAlM0QlM0UlMjAlN0IlMEElMjAlMjAlMjAlMjBjb25zb2xlLmVycm9yKCdFcnJvciUzQSclMkMlMjBlcnJvciklM0IlMEElMjAlMjAlMjAlMjBhbGVydCgnVGhlcmUlMjB3YXMlMjBhbiUyMGVycm9yLiUyMFBsZWFzZSUyMHRyeSUyMGFnYWluLicpJTNCJTBBJTIwJTIwJTdEKS5maW5hbGx5KCgpJTIwJTNEJTNFJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTJGJTJGJTIwUmVzZXQlMjBidXR0b24lMjBzdGF0ZSUwQSUyMCUyMCUyMCUyMHN1Ym1pdEJ1dHRvbi50ZXh0Q29udGVudCUyMCUzRCUyMG9yaWdpbmFsVGV4dCUzQiUwQSUyMCUyMCUyMCUyMHN1Ym1pdEJ1dHRvbi5kaXNhYmxlZCUyMCUzRCUyMGZhbHNlJTNCJTBBJTIwJTIwJTdEKSUzQiUwQSU3RCUwQSUwQSUyRiUyRiUyMENsb3NlJTIwbW9kYWwlMjB3aGVuJTIwY2xpY2tpbmclMjBvdXRzaWRlJTIwb2YlMjBpdCUwQXdpbmRvdy5vbmNsaWNrJTIwJTNEJTIwZnVuY3Rpb24oZXZlbnQpJTIwJTdCJTBBJTIwJTIwY29uc3QlMjBtb2RhbCUyMCUzRCUyMGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdub3RpZnlNb2RhbCcpJTNCJTBBJTIwJTIwaWYlMjAoZXZlbnQudGFyZ2V0JTIwJTNEJTNEJTIwbW9kYWwpJTIwJTdCJTBBJTIwJTIwJTIwJTIwY2xvc2VOb3RpZnlNb2RhbCgpJTNCJTBBJTIwJTIwJTdEJTBBJTdEJTBB'
+></a>
+
+{% stylesheet %}
+  .notify-modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .notify-modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+  }
+
+  .notify-modal-content h3 {
+    margin-top: 0;
+  }
+
+  .notify-modal-content .close {
+    color: #aaa;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .notify-modal-content .close:hover {
+    color: black;
+  }
+
+  .notify-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+{% endstylesheet %}

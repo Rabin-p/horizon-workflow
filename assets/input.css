@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+/* Configure Tailwind to scan your Liquid files */
+@source "../layout/*.liquid";
+@source "../sections/*.liquid";
+@source "../snippets/*.liquid";
+@source "../blocks/*.liquid";
+@source "../templates/*.liquid";

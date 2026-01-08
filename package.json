@@ -1,0 +1,32 @@
+{
+  "name": "horizon-workflow-setup",
+  "version": "1.0.0",
+  "description": "A Shopify theme with Tailwind CSS and Liquid formatting",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@shopify/prettier-plugin-liquid": "^1.10.0",
+    "@tailwindcss/cli": "^4.1.18",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.0.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.7.4",
+    "tailwindcss": "^4.1.18"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/input.css -o ./assets/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./assets/input.css -o ./assets/tailwind.css --watch",
+    "dev": "concurrently --kill-others --raw \"shopify theme dev -e development\" \"pnpm run watch:css\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint assets/",
+    "lint:fix": "eslint assets/ --fix",
+    "lint:liquid": "shopify theme check",
+    "lint:liquid:fix": "shopify theme check --auto-correct",
+    "lint:all": "pnpm run lint && pnpm run lint:liquid"
+  }
+}
