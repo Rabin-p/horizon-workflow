@@ -10,6 +10,8 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.18"
@@ -27,6 +29,19 @@
     "lint:fix": "eslint assets/ --fix",
     "lint:liquid": "shopify theme check",
     "lint:liquid:fix": "shopify theme check --auto-correct",
-    "lint:all": "pnpm run lint && pnpm run lint:liquid"
+    "lint:all": "pnpm run lint && pnpm run lint:liquid",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "assets/*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.liquid": [
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }

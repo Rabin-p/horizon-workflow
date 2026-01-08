@@ -1,0 +1,29 @@
+# Build Tailwind CSS before committing
+echo "Building Tailwind CSS..."
+pnpm run build:css
+
+# Stage the built CSS if it changed
+if ! git diff --quiet assets/tailwind.css 2>/dev/null; then
+  echo "Staging updated tailwind.css..."
+  git add assets/tailwind.css
+fi
+
+# Run lint-staged for JS files (ESLint + Prettier)
+pnpm dlx lint-staged
+
+# Run Theme Check only if there are staged Liquid files
+echo "Checking for staged Liquid files..."
+STAGED_LIQUID_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(liquid|json)$' || true)
+
+if [ -n "$STAGED_LIQUID_FILES" ]; then
+  echo "Running Theme Check..."
+  # Note: Shopify CLI handles the check, we just need the exit code
+  shopify theme check --fail-level error
+  
+  if [ $? -ne 0 ]; then
+    echo "Theme Check failed. Please fix errors before committing."
+    exit 1
+  fi
+else
+  echo "No staged Liquid/JSON files to check."
+fi

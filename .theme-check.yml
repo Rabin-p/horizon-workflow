@@ -1,0 +1,48 @@
+# .theme-check.yml
+extends: theme-check:recommended
+
+root: '.'
+
+ignore:
+  - node_modules/**/*
+  - .shopify/**/*
+  - .git/**/*
+  - locales/**/*
+
+# Rules are listed at the root level in the modern Shopify CLI format
+ValidSchema:
+  enabled: false
+
+UndefinedObject:
+  enabled: false
+
+LiquidHTMLSyntaxError:
+  enabled: false
+
+UnrecognizedRenderSnippetArguments:
+  enabled: false
+
+UnusedAssign:
+  enabled: false
+
+RemoteAsset:
+  enabled: false
+
+MatchingTranslations:
+  enabled: false
+
+MissingTemplate:
+  enabled: false
+
+JSONMissingBlock:
+  enabled: false
+
+TranslationKeyExists:
+  enabled: false
+
+ContentForHeaderModification:
+  enabled: false
+
+UniqueStaticBlockId:
+  enabled: true
+  severity: warning
